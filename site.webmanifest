@@ -1,7 +1,7 @@
 {
   "name": "DamarFlow",
   "short_name": "DamarFlow",
-  "description": "Physics-informed intelligence for multiscale subsurface systems.",
+  "description": "Digital Advanced Models for Reactive Flow",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#06111b",
