@@ -1,6 +1,7 @@
 // ============================================================
 // DamarFlow PINN Model Interface
 // ONNX Runtime Web
+// Serpentinization Reactive Transport Surrogate
 // ============================================================
 
 
@@ -8,60 +9,148 @@ let pinn_session = null;
 
 
 // ============================================================
-// Load ONNX Model
+// ONNX Model Path
 // ============================================================
 
-async function loadPINN(){
+const PINN_MODEL_PATH =
+    "models/serpentinization_pinn.onnx";
 
-    const resultDiv =
-    document.getElementById("result");
+
+// ============================================================
+// Output Variable Mapping
+// Must match training order
+// ============================================================
+
+
+const PINN_OUTPUTS = [
+
+    "Fo90",
+    "Lizardite",
+    "Magnetite",
+    "Brucite",
+
+    "Mg2",
+    "Fe2",
+
+    "SiO2",
+    "H_plus",
+
+    "H2",
+
+    "OH",
+
+    "Porosity",
+
+    "Temperature",
+
+    "Pressure"
+
+];
+
+
+
+// ============================================================
+// Load PINN ONNX Model
+// ============================================================
+
+
+async function loadPINN(){
 
 
     try{
 
-        resultDiv.innerHTML =
-        "<b>Loading PINN model...</b>";
 
-
-        console.log("Loading PINN...");
+        console.log(
+            "Loading DamarFlow PINN..."
+        );
 
 
         pinn_session =
         await ort.InferenceSession.create(
-            "models/serpentinization_pinn.onnx"
+
+            PINN_MODEL_PATH,
+
+            {
+
+                executionProviders:
+                [
+                    "wasm"
+                ]
+
+            }
+
+        );
+
+
+
+        console.log(
+            "PINN model loaded."
         );
 
 
         console.log(
-            "PINN loaded successfully."
-        );
-
-
-        console.log(
-            "Input Names:",
+            "Inputs:",
             pinn_session.inputNames
         );
 
 
         console.log(
-            "Output Names:",
+            "Outputs:",
             pinn_session.outputNames
         );
 
 
-        resultDiv.innerHTML =
-        "<span style='color:lime'>✔ PINN Loaded</span>";
+
+        const result =
+        document.getElementById("result");
+
+
+        if(result){
+
+            result.innerHTML =
+            `
+            <span style="
+            color:#55d6e8">
+            ✔ DamarFlow PINN Loaded
+            </span>
+            `;
+
+        }
+
+
+        return true;
+
 
     }
 
 
-    catch(err){
-
-        console.error(err);
+    catch(error){
 
 
-        resultDiv.innerHTML =
-        "<span style='color:red'>PINN Load Failed</span>";
+        console.error(
+            "PINN loading failed:",
+            error
+        );
+
+
+        const result =
+        document.getElementById("result");
+
+
+        if(result){
+
+            result.innerHTML =
+            `
+            <span style="
+            color:#ff8e7a">
+            ✘ PINN Loading Failed
+            </span>
+            `;
+
+        }
+
+
+        return false;
 
     }
 
@@ -70,83 +159,145 @@ async function loadPINN(){
 
 
 // ============================================================
-// Run PINN Prediction
+// Run PINN Field Prediction
+//
+// Input:
+// x,y,t,T
+//
+// Output:
+// 100x100 reactive transport field
+//
 // ============================================================
 
 
-async function runPINN(T,t){
+async function runPINN(
+
+    temperature,
+
+    time
+
+){
+
 
 
     if(!pinn_session){
 
-        throw new Error(
-            "PINN not loaded"
-        );
+
+        await loadPINN();
+
 
     }
 
 
 
-    const nx=100;
-    const ny=100;
+    if(!pinn_session){
 
 
-    let input=[];
+        throw new Error(
+            "PINN session unavailable"
+        );
+
+
+    }
+
+
+
+    // --------------------------------------------------------
+    // Domain
+    // 5.17 cm × 5.17 cm
+    // 100 × 100 grid
+    // --------------------------------------------------------
+
+
+    const nx = 100;
+
+    const ny = 100;
+
+
+
+    let input = [];
 
 
 
     for(let j=0;j<ny;j++){
 
 
+
         for(let i=0;i<nx;i++){
 
 
-            let x =
+
+            const x =
             5.17*i/(nx-1);
 
 
-            let y =
+
+            const y =
             5.17*j/(ny-1);
 
 
 
+            /*
+              IMPORTANT
+
+              ONNX INPUT ORDER:
+
+              [x,y,time,temperature]
+
+            */
+
+
             input.push(
+
                 x,
+
                 y,
-                t,
-                T
+
+                time,
+
+                temperature
+
             );
 
 
         }
 
+
     }
 
 
 
+
+
+    // --------------------------------------------------------
+    // Create ONNX tensor
+    // --------------------------------------------------------
+
+
     const tensor =
+
     new ort.Tensor(
 
         "float32",
 
-        Float32Array.from(input),
+        new Float32Array(input),
 
         [
+
             nx*ny,
+
             4
+
         ]
 
     );
 
 
 
-    console.log(
-        "Running PINN..."
-    );
 
 
+    const feeds = {};
 
-    const feeds={};
 
 
     feeds[
@@ -155,115 +306,229 @@ async function runPINN(T,t){
 
 
 
-    const outputs =
-    await pinn_session.run(
-        feeds
-    );
-
-
 
     console.log(
-        "Inference complete.",
-        outputs
+        "Running PINN inference..."
     );
 
 
 
-    const outName =
+    const outputs =
+
+    await pinn_session.run(
+
+        feeds
+
+    );
+
+
+
+
+
+    const outputName =
+
     pinn_session.outputNames[0];
 
 
 
     const predictionTensor =
-    outputs[outName];
+
+    outputs[outputName];
+
 
 
 
     console.log(
-        "Prediction tensor:",
-        predictionTensor
+
+        "Output dimensions:",
+
+        predictionTensor.dims
+
     );
 
 
 
-    // =====================================================
-    // Convert ONNX Tensor -> JavaScript Array
-    // =====================================================
+
+
+    // ========================================================
+    // Convert tensor
+    // Shape:
+    //
+    // [10000,13]
+    //
+    // ========================================================
 
 
     const raw =
-    predictionTensor.cpuData;
+
+    predictionTensor.data;
 
 
 
-    const dims =
-    predictionTensor.dims;
+    const cells =
+
+    predictionTensor.dims[0];
 
 
 
-    console.log(
-        "Prediction dimensions:",
-        dims
-    );
+    const variables =
+
+    predictionTensor.dims[1];
 
 
 
-    const nCells =
-    dims[0];
 
 
-    const nOutputs =
-    dims[1];
+    let field = [];
 
 
 
-    let prediction=[];
+
+
+    for(let i=0;i<cells;i++){
 
 
 
-    for(let i=0;i<nCells;i++){
+        let cell = {};
 
 
-        let cell={};
+
+        for(let j=0;j<variables;j++){
 
 
-        for(let j=0;j<nOutputs;j++){
+
+            let name =
+
+            PINN_OUTPUTS[j]
+
+            ||
+            "Output_"+j;
 
 
-            cell[
-                "var"+j
-            ] =
+
+
+            cell[name] =
+
             raw[
-                i*nOutputs+j
+                i*variables+j
             ];
+
 
 
         }
 
 
-        prediction.push(cell);
+
+        field.push(cell);
+
 
 
     }
 
 
 
+
+
     console.log(
-        "Converted prediction:",
-        prediction
+
+        "PINN field generated:",
+
+        field
+
     );
+
+
 
 
 
     return {
 
+
         nx:nx,
+
 
         ny:ny,
 
-        data:prediction
+
+        temperature:temperature,
+
+
+        time:time,
+
+
+        data:field
+
 
     };
+
+
+
+}
+
+
+
+
+
+
+
+// ============================================================
+// Utility:
+// Get one variable as 100x100 matrix
+// For Plotly heatmaps
+// ============================================================
+
+
+
+function extractField(
+
+    prediction,
+
+    variable
+
+){
+
+
+
+    let matrix=[];
+
+
+
+    for(let j=0;j<prediction.ny;j++){
+
+
+        let row=[];
+
+
+
+        for(let i=0;i<prediction.nx;i++){
+
+
+
+            let id =
+
+            j*prediction.nx+i;
+
+
+
+            row.push(
+
+                prediction
+                .data[id][variable]
+
+            );
+
+
+        }
+
+
+        matrix.push(row);
+
+
+    }
+
+
+
+    return matrix;
 
 
 }
