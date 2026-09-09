@@ -8,18 +8,22 @@ let pinn_session = null;
 
 
 // ============================================================
-// Load PINN Model
+// Load ONNX Model
 // ============================================================
 
 async function loadPINN(){
 
     const resultDiv =
-        document.getElementById("result");
+    document.getElementById("result");
 
 
     try{
 
-        console.log("Loading PINN model...");
+        resultDiv.innerHTML =
+        "<b>Loading PINN model...</b>";
+
+
+        console.log("Loading PINN...");
 
 
         pinn_session =
@@ -34,41 +38,30 @@ async function loadPINN(){
 
 
         console.log(
-            "Inputs:",
+            "Input Names:",
             pinn_session.inputNames
         );
 
 
         console.log(
-            "Outputs:",
+            "Output Names:",
             pinn_session.outputNames
         );
 
 
         resultDiv.innerHTML =
-        `
-        <span style="color:#00ff00">
-        ✔ PINN model loaded
-        </span>
-        `;
-
+        "<span style='color:lime'>✔ PINN Loaded</span>";
 
     }
 
-    catch(error){
 
-        console.error(
-            "PINN loading failed",
-            error
-        );
+    catch(err){
+
+        console.error(err);
 
 
         resultDiv.innerHTML =
-        `
-        <span style="color:red">
-        ❌ PINN loading failed
-        </span>
-        `;
+        "<span style='color:red'>PINN Load Failed</span>";
 
     }
 
@@ -76,11 +69,10 @@ async function loadPINN(){
 
 
 
-
-
 // ============================================================
 // Run PINN Prediction
 // ============================================================
+
 
 async function runPINN(T,t){
 
@@ -88,28 +80,23 @@ async function runPINN(T,t){
     if(!pinn_session){
 
         throw new Error(
-            "PINN model not loaded"
+            "PINN not loaded"
         );
 
     }
 
 
 
-    const nx = 100;
-    const ny = 100;
+    const nx=100;
+    const ny=100;
 
 
-    let input =
-    new Float32Array(
-        nx*ny*4
-    );
-
-
-    let k=0;
+    let input=[];
 
 
 
     for(let j=0;j<ny;j++){
+
 
         for(let i=0;i<nx;i++){
 
@@ -123,10 +110,12 @@ async function runPINN(T,t){
 
 
 
-            input[k++] = x;
-            input[k++] = y;
-            input[k++] = t;
-            input[k++] = T;
+            input.push(
+                x,
+                y,
+                t,
+                T
+            );
 
 
         }
@@ -140,7 +129,7 @@ async function runPINN(T,t){
 
         "float32",
 
-        input,
+        Float32Array.from(input),
 
         [
             nx*ny,
@@ -157,67 +146,122 @@ async function runPINN(T,t){
 
 
 
-    const result =
-    await pinn_session.run({
-
-        xytT:tensor
-
-    });
+    const feeds={};
 
 
+    feeds[
+        pinn_session.inputNames[0]
+    ] = tensor;
 
-    console.log(
-        "Inference complete."
-    );
 
-    console.log(
-        result
+
+    const outputs =
+    await pinn_session.run(
+        feeds
     );
 
 
 
-    const outputName =
+    console.log(
+        "Inference complete.",
+        outputs
+    );
+
+
+
+    const outName =
     pinn_session.outputNames[0];
 
 
 
-    const outputTensor =
-    result[outputName];
+    const predictionTensor =
+    outputs[outName];
 
 
 
     console.log(
         "Prediction tensor:",
-        outputTensor
+        predictionTensor
     );
 
 
 
-    //--------------------------------------------------
-    // Convert ONNX tensor to normal JS array
-    //--------------------------------------------------
+    // =====================================================
+    // Convert ONNX Tensor -> JavaScript Array
+    // =====================================================
 
-    const prediction =
-    Array.from(
-        outputTensor.cpuData
-    );
+
+    const raw =
+    predictionTensor.cpuData;
+
+
+
+    const dims =
+    predictionTensor.dims;
 
 
 
     console.log(
-        "Prediction length:",
-        prediction.length
+        "Prediction dimensions:",
+        dims
+    );
+
+
+
+    const nCells =
+    dims[0];
+
+
+    const nOutputs =
+    dims[1];
+
+
+
+    let prediction=[];
+
+
+
+    for(let i=0;i<nCells;i++){
+
+
+        let cell={};
+
+
+        for(let j=0;j<nOutputs;j++){
+
+
+            cell[
+                "var"+j
+            ] =
+            raw[
+                i*nOutputs+j
+            ];
+
+
+        }
+
+
+        prediction.push(cell);
+
+
+    }
+
+
+
+    console.log(
+        "Converted prediction:",
+        prediction
     );
 
 
 
     return {
 
-        values:prediction,
-
         nx:nx,
 
-        ny:ny
+        ny:ny,
+
+        data:prediction
 
     };
 
