@@ -13,7 +13,7 @@ let pinn_session = null;
 // ============================================================
 
 const PINN_MODEL_PATH =
-    "demo/model/serpentinization_pinn.onnx";
+    "demo/model/serpentinization_";
 
 
 // ============================================================
