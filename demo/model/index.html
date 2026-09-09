@@ -961,30 +961,39 @@ Download Figure
 </button>
 
 <br><br>
+<div id="result">
 
+    <h3>PINN Prediction Result</h3>
+
+    <!-- Plot container -->
+   <body>
+
+<section>
 
 <div id="result">
 
-<div id="mineralPlot"
-style="
-width:100%;
-height:700px;">
-</div>
+    <div id="mineralPlot"
+    style="
+    width:100%;
+    height:700px;">
+    </div>
 
 </div>
 
-
-</div>
-
-
-</div>
-
-
-</div>
 
 </section>
 
 
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.min.js"></script>
+
+<script src="pinn_model.js"></script>
+
+<script src="visualization.js"></script>
+
+
+</body>
 
 <!-- ===================================================== -->
 <!-- DamarFlow JavaScript Libraries -->
@@ -1053,7 +1062,9 @@ t
 // Update visualization
 
 visualizeMineral(
-result,
+{
+    prediction: result
+},
 T,
 t
 );
