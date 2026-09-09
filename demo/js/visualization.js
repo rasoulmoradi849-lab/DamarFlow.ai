@@ -48,9 +48,8 @@ title:"Fo90 fraction"
 
 
 Plotly.newPlot(
-
-"result",
-
+"mineralPlot",
+    
 data,
 
 {
