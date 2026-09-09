@@ -1128,7 +1128,24 @@ function(){
 });
 
 </script>
+<script>
 
+function downloadPNG(){
+
+    Plotly.downloadImage(
+        "mineralPlot",
+        {
+            format:"png",
+            width:2400,
+            height:1800,
+            scale:2,
+            filename:"DamarFlow_PINN_prediction"
+        }
+    );
+
+}
+
+</script>
 </body>
 </html>
 </body>
