@@ -870,15 +870,261 @@ function drawField(t){
 }
 resizeField();window.addEventListener('resize',resizeField);updateControls();requestAnimationFrame(drawField);
 </script>
-  <!-- DamarFlow visualization scripts -->
+ <!-- ===================================================== -->
+<!-- DamarFlow Serpentinization AI User Input Panel -->
+<!-- ===================================================== -->
+
+<section class="section">
+
+<div class="container">
+
+
+<h2>
+DamarFlow Serpentinization AI
+</h2>
+
+
+<div class="pinn-panel">
+
+
+<label>
+Temperature (°C)
+</label>
+
+<input 
+id="temperature"
+type="number"
+value="250"
+min="200"
+max="400"
+>
+
+
+<br><br>
+
+
+<label>
+Reaction Time (hour)
+</label>
+
+<input
+id="time"
+type="number"
+value="4"
+min="0"
+max="10"
+>
+
+
+<br><br>
+
+
+<label>
+X Position (cm)
+</label>
+
+<input
+id="x"
+type="number"
+value="2.5"
+min="0"
+max="5.17"
+step="0.01"
+>
+
+
+<br><br>
+
+
+<label>
+Y Position (cm)
+</label>
+
+<input
+id="y"
+type="number"
+value="2.5"
+min="0"
+max="5.17"
+step="0.01"
+>
+
+
+<br><br>
+
+
+<button onclick="predict()">
+Run PINN Simulation
+</button>
+
+
+<br><br>
+
+
+<div id="result">
+
+Waiting for PINN simulation...
+
+</div>
+
+
+</div>
+
+
+</div>
+
+</section>
+
+
+
+<!-- ===================================================== -->
+<!-- DamarFlow JavaScript Libraries -->
+<!-- ===================================================== -->
+
+
+<!-- PINN ONNX inference engine -->
 <script src="js/pinn_model.js"></script>
-<script src="js/damarflow_visualization.js"></script>
+
+
+<!-- Plotly and mineral visualization -->
+<script src="demo/js/visualization.js"></script>
+
+
+<!-- ===================================================== -->
+<!-- User Interaction -->
+<!-- ===================================================== -->
 
 
 <script>
-window.onload = function(){
+
+
+async function predict(){
+
+
+let T = 
+Number(
+document.getElementById("temperature").value
+);
+
+
+
+let t = 
+Number(
+document.getElementById("time").value
+);
+
+
+
+let x = 
+Number(
+document.getElementById("x").value
+);
+
+
+
+let y = 
+Number(
+document.getElementById("y").value
+);
+
+
+
+// Run ONNX PINN model
+
+let result = 
+await runPINN(
+x,
+y,
+T,
+t
+);
+
+
+
+// Update visualization
+
+visualizeMineral(
+result,
+T,
+t
+);
+
+
+
+// Display numerical output
+
+document.getElementById("result").innerHTML =
+
+`
+<h3>PINN Prediction Results</h3>
+
+<p>
+Temperature:
+${T} °C
+</p>
+
+<p>
+Reaction Time:
+${t} hour
+</p>
+
+<p>
+Location:
+(${x}, ${y}) cm
+</p>
+
+<hr>
+
+<p>
+Fo90:
+${result.Fo90.toFixed(4)}
+</p>
+
+<p>
+Lizardite:
+${result.Lizardite.toFixed(4)}
+</p>
+
+<p>
+Magnetite:
+${result.Magnetite.toFixed(4)}
+</p>
+
+<p>
+Brucite:
+${result.Brucite.toFixed(4)}
+</p>
+
+<p>
+H₂:
+${result.H2.toFixed(4)}
+</p>
+
+`;
+
+}
+
+
+
+</script>
+
+
+
+<!-- ===================================================== -->
+<!-- Initialize PINN Model -->
+<!-- ===================================================== -->
+
+
+<script>
+
+document.addEventListener(
+"DOMContentLoaded",
+function(){
+
     loadPINN();
-};
+
+});
+
 </script>
 
 </body>
