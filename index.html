@@ -1035,14 +1035,9 @@ Number(document.getElementById("temperature").value);
 // ONNX input order
 // x,y,time,temperature
 
-let result =
-await runPINN(
-[
-x,
-y,
-t,
-T
-]
+let result = await runPINN(
+    T,
+    t
 );
 
 
