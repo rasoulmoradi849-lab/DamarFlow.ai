@@ -1,51 +1,22 @@
 // ============================================================
-// DamarFlow PINN Visualization
-// ONNX Runtime Web + Plotly
+// DamarFlow Mineral Visualization
 // ============================================================
 
 
-function visualizeMineral(output){
+function visualizeMineral(result){
 
 
-    console.log("Visualization output:");
-    console.log(output);
+console.log(
+"Visualization output:",
+result
+);
 
 
 
-    // ========================================================
-    // Extract ONNX tensor correctly
-    // ========================================================
-
-    let tensor;
-
-
-// Case 1:
-// visualizeMineral(prediction)
-
-if(output.cpuData){
-
-    tensor = output;
-
-}
-
-
-// Case 2:
-// visualizeMineral({prediction: prediction})
-
-else if(output.prediction){
-
-    tensor = output.prediction;
-
-}
-
-
-else{
-
-    console.error(
-        "Received output:",
-        output
-    );
-
+if(
+    !result ||
+    !result.data
+){
 
     throw new Error(
         "Invalid PINN output format"
@@ -55,187 +26,101 @@ else{
 
 
 
-    let values = tensor.cpuData;
+const values =
+result.data.map(
+    d=>d.var0
+);
 
 
-    console.log(
-        "Prediction length:",
-        values.length
+
+console.log(
+"Plot values:",
+values.length
+);
+
+
+
+const plotDiv =
+document.getElementById(
+    "mineralPlot"
+);
+
+
+
+if(!plotDiv){
+
+    throw new Error(
+        "mineralPlot DIV missing"
     );
 
-
-    console.log(
-        "Tensor dimensions:",
-        tensor.dims
-    );
+}
 
 
 
-    // ========================================================
-    // Tensor dimensions
-    // ========================================================
 
-    const nx = 100;
-    const ny = 100;
-
-    const nVariables = 13;
+let z=[];
 
 
 
-    /*
-        Variable order from PINN output
-
-        0  Fo90
-        1  Lizardite
-        2  Magnetite
-        3  Brucite
-        4  Mg2+
-        5  Fe2+
-        6  SiO2
-        7  H+
-        8  H2
-        9  ...
-        10 ...
-        11 ...
-        12 ...
-
-    */
+for(let j=0;j<100;j++){
 
 
-
-    // Choose variable to display
-
-    const variableIndex = 0;   // Fo90
+    let row=[];
 
 
-
-    let mineral=[];
-
+    for(let i=0;i<100;i++){
 
 
-    for(let j=0;j<ny;j++){
-
-
-        let row=[];
-
-
-        for(let i=0;i<nx;i++){
-
-
-            let cell =
-            j*nx+i;
-
-
-            let index =
-            cell*nVariables
-            +
-            variableIndex;
-
-
-
-            row.push(
-                values[index]
-            );
-
-
-        }
-
-
-        mineral.push(row);
-
-
-    }
-
-
-
-    console.log(
-        "Heatmap size:",
-        mineral.length,
-        mineral[0].length
-    );
-
-
-
-    // ========================================================
-    // Plot
-    // ========================================================
-
-
-    let plotDiv =
-    document.getElementById(
-        "mineralPlot"
-    );
-
-
-    if(!plotDiv){
-
-        console.error(
-            "mineralPlot div not found"
+        row.push(
+            values[
+                j*100+i
+            ]
         );
 
-        return;
 
     }
 
 
-
-    let trace={
-
-
-        z:mineral,
-
-        type:"heatmap",
-
-        colorscale:"Viridis",
-
-        colorbar:{
-
-            title:"Fo90 fraction"
-
-        }
+    z.push(row);
 
 
-    };
+}
 
 
 
-    let layout={
+Plotly.newPlot(
+
+"mineralPlot",
+
+[{
+
+    z:z,
+
+    type:"heatmap",
+
+    colorscale:"Viridis"
+
+}],
 
 
-        title:
-        "DamarFlow PINN Prediction - Fo90",
+{
 
+title:
+"PINN Mineral Prediction",
 
-        xaxis:{
+xaxis:{
+title:"X position"
+},
 
-            title:"X grid"
+yaxis:{
+title:"Y position"
+}
 
-        },
-
-
-        yaxis:{
-
-            title:"Y grid"
-
-        },
-
-
-        height:700
-
-
-    };
+}
 
 
 
-    Plotly.newPlot(
-
-        "mineralPlot",
-
-        [trace],
-
-        layout
-
-    );
+);
 
 
 }
