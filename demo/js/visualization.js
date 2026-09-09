@@ -6,6 +6,14 @@
 function visualizeMineral(result){
 
 
+    createMineralDashboard(
+        result
+    );
+
+
+}{
+
+
 console.log(
 "Visualization output:",
 result
