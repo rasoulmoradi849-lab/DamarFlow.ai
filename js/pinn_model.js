@@ -28,7 +28,7 @@ async function loadPINN(){
 
         pinn_session =
         await ort.InferenceSession.create(
-            "demo/model/serpentinization_pinn.onnx"
+            "models/serpentinization_pinn.onnx"
         );
 
 
