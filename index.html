@@ -1018,103 +1018,35 @@ Download Figure
 
 async function predict(){
 
+let x =
+Number(document.getElementById("x").value);
 
-let T = 
-Number(
-document.getElementById("temperature").value
-);
+let y =
+Number(document.getElementById("y").value);
 
+let t =
+Number(document.getElementById("time").value);
 
-
-let t = 
-Number(
-document.getElementById("time").value
-);
-
+let T =
+Number(document.getElementById("temperature").value);
 
 
-let x = 
-Number(
-document.getElementById("x").value
-);
+// IMPORTANT
+// ONNX input order
+// x,y,time,temperature
 
-
-
-let y = 
-Number(
-document.getElementById("y").value
-);
-
-
-
-// Run ONNX PINN model
-
-let result = 
+let result =
 await runPINN(
+[
 x,
 y,
-T,
-t
+t,
+T
+]
 );
 
 
-
-// Update visualization
-
-visualizeMineral(prediction);
-
-
-
-// Display numerical output
-
-document.getElementById("result").innerHTML =
-
-`
-<h3>PINN Prediction Results</h3>
-
-<p>
-Temperature:
-${T} °C
-</p>
-
-<p>
-Reaction Time:
-${t} hour
-</p>
-
-<p>
-Location:
-(${x}, ${y}) cm
-</p>
-
-<hr>
-
-<p>
-Fo90:
-${result.Fo90.toFixed(4)}
-</p>
-
-<p>
-Lizardite:
-${result.Lizardite.toFixed(4)}
-</p>
-
-<p>
-Magnetite:
-${result.Magnetite.toFixed(4)}
-</p>
-
-<p>
-Brucite:
-${result.Brucite.toFixed(4)}
-</p>
-
-<p>
-H₂:
-${result.H2.toFixed(4)}
-</p>
-
-`;
+visualizeMineral(result);
 
 }
 
