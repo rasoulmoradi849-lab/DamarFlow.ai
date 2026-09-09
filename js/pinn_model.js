@@ -3,6 +3,7 @@
 // ONNX Runtime Web
 // ============================================================
 
+
 let pinn_session = null;
 
 
@@ -12,145 +13,337 @@ let pinn_session = null;
 
 async function loadPINN(){
 
-    const resultDiv = document.getElementById("result");
+
+    const resultDiv =
+    document.getElementById("result");
+
 
     try{
+
 
         resultDiv.innerHTML =
         "<b>Loading PINN model...</b>";
 
-        console.log("Loading PINN...");
 
-        pinn_session = await ort.InferenceSession.create(
-            "demo/model/serpentinization_pinn.onnx"
+        console.log(
+            "Loading PINN..."
         );
 
-        console.log("PINN loaded successfully.");
 
-        console.log("Input Names:");
-        console.log(pinn_session.inputNames);
 
-        console.log("Output Names:");
-        console.log(pinn_session.outputNames);
+        pinn_session =
+        await ort.InferenceSession.create(
+
+            "demo/model/serpentinization_pinn.onnx",
+
+            {
+
+                executionProviders:[
+                    "wasm"
+                ]
+
+            }
+
+        );
+
+
+
+        console.log(
+            "PINN loaded successfully."
+        );
+
+
+        console.log(
+            "Input Names:"
+        );
+
+        console.log(
+            pinn_session.inputNames
+        );
+
+
+        console.log(
+            "Output Names:"
+        );
+
+        console.log(
+            pinn_session.outputNames
+        );
+
+
 
         resultDiv.innerHTML =
-        "<span style='color:lime;'>✔ PINN model loaded successfully.</span>";
+
+        `
+        <span style="color:#55d6e8">
+        ✔ PINN model loaded successfully
+        </span>
+        `;
+
+
 
     }
+
+
     catch(err){
 
-        console.error("PINN loading failed");
+
+        console.error(
+            "PINN loading failed"
+        );
+
 
         console.error(err);
 
+
+
         resultDiv.innerHTML =
-        "<span style='color:red;'>❌ Failed to load PINN model.<br>" +
-        err.message +
-        "</span>";
+
+        `
+        <span style="color:red">
+        ❌ PINN loading failed
+        <br>
+        ${err.message}
+        </span>
+        `;
+
 
     }
+
 
 }
 
 
 
+
+
 // ============================================================
-// Run Prediction
+// Run PINN Prediction
+// Input:
+// T = temperature
+// t = reaction time
+//
+// Generates complete 100x100 field
 // ============================================================
+
 
 async function runPINN(T,t){
 
-    if(pinn_session===null){
+
+
+    if(
+        pinn_session===null
+    ){
 
         throw new Error(
-            "PINN model has not been loaded."
+            "PINN model not loaded."
         );
 
     }
+
 
 
     const nx = 100;
     const ny = 100;
 
 
-    let input=[];
+
+    let input = [];
 
 
-    for(let j=0;j<ny;j++){
 
-        for(let i=0;i<nx;i++){
+    /*
+       Input order from ONNX:
+
+       xytT
+
+       [x,y,t,T]
+
+    */
+
+
+    for(
+        let j=0;
+        j<ny;
+        j++
+    ){
+
+
+        for(
+            let i=0;
+            i<nx;
+            i++
+        ){
+
+
 
             let x =
             5.17*i/(nx-1);
 
+
+
             let y =
             5.17*j/(ny-1);
 
+
+
             input.push(
+
                 x,
                 y,
                 t,
                 T
+
             );
+
 
         }
 
     }
 
 
-    const tensor =
+
+
+
+    const inputTensor =
+
     new ort.Tensor(
 
         "float32",
 
         Float32Array.from(input),
 
-        [nx*ny,4]
+        [
+
+            nx*ny,
+            4
+
+        ]
 
     );
 
 
-    console.log("Running PINN...");
+
+
+    console.log(
+        "Running PINN..."
+    );
+
+
 
     let outputs;
 
 
+
     try{
 
-        //-----------------------------------------------------
-        // Change "xytT" if console shows another input name
-        //-----------------------------------------------------
 
         outputs =
-        await pinn_session.run({
 
-            xytT:tensor
+        await pinn_session.run(
 
-        });
+            {
+
+
+                xytT:
+                inputTensor
+
+
+            }
+
+        );
+
 
     }
+
 
     catch(err){
 
+
+        console.error(
+            "PINN inference error"
+        );
+
+
         console.error(err);
 
+
         throw err;
+
 
     }
 
 
-    console.log("Inference complete.");
-
-    console.log(outputs);
 
 
-    //---------------------------------------------------------
-    // Automatically obtain first output
-    //---------------------------------------------------------
+    console.log(
+        "Inference complete."
+    );
+
+
+    console.log(
+        outputs
+    );
+
+
+
+
+    // ========================================================
+    // Extract output tensor automatically
+    // ========================================================
+
 
     const outputName =
+
     pinn_session.outputNames[0];
 
-    return outputs[outputName];
+
+
+    const prediction =
+
+    outputs[outputName];
+
+
+
+    console.log(
+        "Prediction tensor:"
+    );
+
+
+    console.log(
+        prediction
+    );
+
+
+
+
+
+    // ========================================================
+    // Return clean object
+    // ========================================================
+
+
+    return {
+
+
+        prediction:
+        prediction,
+
+
+        data:
+        prediction.cpuData,
+
+
+        dims:
+        prediction.dims,
+
+
+        size:
+        prediction.size
+
+
+    };
+
+
 
 }
