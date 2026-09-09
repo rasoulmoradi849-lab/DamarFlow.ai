@@ -19,25 +19,39 @@ function visualizeMineral(output){
     let tensor;
 
 
-    if(output.cpuData){
+// Case 1:
+// visualizeMineral(prediction)
 
-        // Direct tensor
-        tensor = output;
+if(output.cpuData){
 
-    }
-    else if(output.prediction && output.prediction.cpuData){
+    tensor = output;
 
-        // Object containing tensor
-        tensor = output.prediction;
+}
 
-    }
-    else{
 
-        throw new Error(
-            "Invalid PINN output format"
-        );
+// Case 2:
+// visualizeMineral({prediction: prediction})
 
-    }
+else if(output.prediction){
+
+    tensor = output.prediction;
+
+}
+
+
+else{
+
+    console.error(
+        "Received output:",
+        output
+    );
+
+
+    throw new Error(
+        "Invalid PINN output format"
+    );
+
+}
 
 
 
