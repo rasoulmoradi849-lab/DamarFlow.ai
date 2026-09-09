@@ -1,178 +1,79 @@
-function visualizeMineral(output, T, t) {
+function visualizeMineral(output,T,t){
 
 
-    /*
-      ONNX output layout:
-
-      column 0-8:
-          aqueous species
-
-      column 9:
-          Fo90
-
-      column 10:
-          Lizardite
-
-      column 11:
-          Magnetite
-
-      column 12:
-          Brucite
-    */
+let mineral =
+output.output_1;
 
 
-    let prediction;
+
+let field=[];
 
 
-    // Case 1:
-    // onnxruntime-web returns object
+for(let j=0;j<100;j++){
 
-    if(output.prediction){
+    let row=[];
 
-        prediction = output.prediction.data;
+    for(let i=0;i<100;i++){
 
-    }
-
-
-    // Case 2:
-    // direct tensor array
-
-    else if(output.data){
-
-        prediction = output.data;
-
-    }
-
-
-    else{
-
-        console.error(
-            "Invalid ONNX output",
-            output
+        row.push(
+            mineral[j*100+i]
         );
 
-        return;
-
     }
 
+    field.push(row);
 
-
-    let field=[];
-
-
-    const nx=100;
-    const ny=100;
-
-
-    for(let j=0;j<ny;j++){
-
-
-        let row=[];
-
-
-        for(let i=0;i<nx;i++){
-
-
-            let index =
-                j*nx+i;
-
-
-            /*
-              Each grid point has 13 outputs
-
-              [H+,Mg++,Fe++,O2,SiO2,
-               Na,Cl,HCO3,Tracer,
-               Fo90,Lizardite,
-               Magnetite,Brucite]
-
-            */
-
-
-            let mineralIndex =
-                index*13 + 9;
+}
 
 
 
-            row.push(
-                prediction[mineralIndex]
-            );
+let data=[
 
+{
 
-        }
+z:field,
 
+type:"heatmap",
 
-        field.push(row);
+colorscale:"Viridis",
 
-    }
+colorbar:{
+title:"Fo90 fraction"
+}
 
+}
 
-
-
-    let data=[
-
-        {
-
-            z:field,
-
-            type:"heatmap",
-
-            colorscale:"Viridis",
-
-            colorbar:{
-
-                title:
-                "Fo90 volume fraction"
-
-            }
-
-        }
-
-    ];
+];
 
 
 
-    Plotly.newPlot(
+Plotly.newPlot(
 
-        "result",
+"result",
 
-        data,
+data,
 
-        {
+{
 
+title:
+"Fo90 Prediction | T="
++T+
+" °C , t="
++t+
+" h",
 
-            title:
-            "Fo90 Prediction | T="
-            +T+
-            " °C , t="
-            +t+
-            " h",
+xaxis:{
+title:"x (cm)"
+},
 
-
-
-            xaxis:{
-
-                title:
-                "x (cm)"
-
-            },
+yaxis:{
+title:"y (cm)"
+}
 
 
-            yaxis:{
+}
 
-                title:
-                "y (cm)"
-
-            },
-
-
-            width:700,
-
-            height:600
-
-        }
-
-
-    );
+);
 
 
 }
