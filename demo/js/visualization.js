@@ -1,123 +1,119 @@
-function visualizeMineral(output,T,t){
+// ============================================================
+// DamarFlow Mineral Visualization
+// Plotly Heatmap
+// ============================================================
 
 
-console.log("Visualization output:",output);
+function visualizeMineral(result){
 
 
-// Get ONNX output
-
-let prediction =
-output.prediction.cpuData;
-
-
-
-console.log(
-"Prediction length:",
-prediction.length
-);
+    console.log(
+        "Visualization output:",
+        result
+    );
 
 
 
-// Number of predicted fields
-
-let nFields = 13;
-
-let nx = 100;
-let ny = 100;
+    const data =
+    result.values;
 
 
 
-// Select Fo90 field
-
-let fieldIndex = 0;
-
+    const nx =
+    result.nx;
 
 
-let field=[];
+    const ny =
+    result.ny;
 
 
 
-for(let j=0;j<ny;j++){
+    console.log(
+        "Prediction length:",
+        data.length
+    );
 
 
-    let row=[];
+
+    //-------------------------------------------------
+    // Convert flat array to 2D matrix
+    //-------------------------------------------------
+
+    let z=[];
 
 
-    for(let i=0;i<nx;i++){
+    for(let j=0;j<ny;j++){
+
+        let row=[];
 
 
-        let index =
-        fieldIndex*nx*ny
-        +
-        j*nx
-        +
-        i;
+        for(let i=0;i<nx;i++){
+
+            row.push(
+                data[j*nx+i]
+            );
+
+        }
 
 
-        row.push(
-            prediction[index]
-        );
-
+        z.push(row);
 
     }
 
 
-    field.push(row);
 
-}
+    //-------------------------------------------------
+    // Plot
+    //-------------------------------------------------
 
+    const plotData=[
 
+        {
 
+            z:z,
 
-Plotly.newPlot(
+            type:"heatmap",
 
-"mineralPlot",
+            colorscale:"Viridis"
 
-[
+        }
 
-{
-
-z:field,
-
-type:"heatmap",
-
-colorscale:"Viridis",
-
-colorbar:{
-title:"Fo90"
-}
+    ];
 
 
-}
 
-],
-
-
-{
+    const layout={
 
 
-title:
-"Fo90 Prediction | T="
-+T+
-" °C | t="
-+t+
-" h",
+        title:
+        "PINN Mineral Prediction",
 
 
-xaxis:{
-title:"x (cm)"
-},
+        xaxis:
+        {
+            title:"X (cm)"
+        },
 
 
-yaxis:{
-title:"y (cm)"
-}
+        yaxis:
+        {
+            title:"Y (cm)"
+        }
 
 
-}
+    };
 
 
-);
+
+    Plotly.newPlot(
+
+        "mineralPlot",
+
+        plotData,
+
+        layout
+
+    );
 
 
 }
