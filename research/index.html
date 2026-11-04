@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#07131f">
+<meta name="description" content="DamarFlow Literature Watch — AI-curated papers and weekly literature reviews on serpentinization, reactive transport and physics-informed machine learning.">
+<title>Literature Watch — DamarFlow</title>
+<link rel="canonical" href="https://damarflow.com/research/">
+<link rel="icon" href="/assets/svg/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/assets/img/favicon-32.png" sizes="32x32">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
+<style>
+:root{
+  --bg:#06111b;--panel:#0c1d2b;--card:rgba(15,37,53,.72);
+  --line:rgba(150,190,210,.15);--line2:rgba(150,190,210,.28);
+  --text:#edf6fa;--muted:#91a9b7;--cyan:#55d6e8;--teal:#55c8a5;--gold:#e7c56a;
+  --radius:18px;--max:1120px;
+}
+body.light{--bg:#f2f7f9;--panel:#fff;--card:rgba(255,255,255,.86);--line:rgba(25,60,78,.12);--line2:rgba(25,60,78,.24);--text:#102532;--muted:#607785;--cyan:#1d8fa6}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(circle at 15% 0%,rgba(36,174,202,.10),transparent 28rem),var(--bg);color:var(--text);font-family:"DM Sans",sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:var(--cyan);text-decoration:none}
+a:hover{text-decoration:underline}
+h1,h2,h3{font-family:"Space Grotesk",sans-serif;letter-spacing:-.03em;margin:0}
+p{margin:0}
+.container{width:min(var(--max),calc(100% - 32px));margin:auto}
+.mono{font-family:"IBM Plex Mono",monospace}
+header{position:sticky;top:0;z-index:10;backdrop-filter:blur(14px);background:color-mix(in srgb,var(--bg) 80%,transparent);border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;justify-content:space-between;height:64px;gap:12px}
+.logo{display:flex;align-items:center;gap:10px;color:var(--text);font:600 19px "Space Grotesk",sans-serif}
+.logo svg{width:30px;height:30px;color:var(--text)}
+.logo b{color:var(--cyan);font-weight:600}
+.nav-actions{display:flex;gap:10px;align-items:center}
+.icon-btn{width:38px;height:38px;border-radius:50%;border:1px solid var(--line2);background:transparent;color:var(--text);cursor:pointer}
+.back{font-size:14px;color:var(--muted)}
+.hero{padding:64px 0 28px}
+.kicker{display:inline-flex;align-items:center;gap:10px;font:500 11px/1 "IBM Plex Mono",monospace;letter-spacing:.16em;text-transform:uppercase;color:var(--cyan);margin-bottom:16px}
+.kicker:before{content:"";width:28px;height:1px;background:currentColor}
+.hero h1{font-size:clamp(34px,6vw,58px);line-height:1.04;margin-bottom:14px}
+.hero p{color:var(--muted);max-width:680px;font-size:17px}
+.stats{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.stat{border:1px solid var(--line);border-radius:999px;padding:6px 14px;font:500 12px "IBM Plex Mono",monospace;color:var(--muted)}
+.stat b{color:var(--text)}
+.tabs{display:flex;gap:6px;border-bottom:1px solid var(--line);margin:24px 0 22px;overflow-x:auto}
+.tab{background:none;border:0;border-bottom:2px solid transparent;color:var(--muted);padding:12px 14px;font:600 15px "Space Grotesk",sans-serif;cursor:pointer;white-space:nowrap}
+.tab[aria-selected=true]{color:var(--text);border-color:var(--cyan)}
+.panel[hidden]{display:none}
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px}
+.toolbar input,.toolbar select{background:var(--panel);border:1px solid var(--line2);color:var(--text);border-radius:12px;padding:10px 12px;font:inherit;font-size:14px}
+.toolbar input{flex:1 1 240px;min-width:0}
+.list{display:grid;gap:14px;padding-bottom:80px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px 22px}
+.card h3{font-size:19px;line-height:1.3;margin-bottom:6px}
+.card h3 a{color:var(--text)}
+.meta{color:var(--muted);font-size:13px;margin-bottom:12px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.chip{font:500 11px "IBM Plex Mono",monospace;border:1px solid var(--line2);border-radius:999px;padding:3px 9px;color:var(--muted)}
+.chip.rel{color:var(--bg);background:var(--teal);border-color:var(--teal)}
+.chip.rel.mid{background:var(--gold);border-color:var(--gold)}
+.chip.rel.low{background:transparent;color:var(--muted);border-color:var(--line2)}
+.summary{color:var(--text);margin-bottom:10px}
+details{border-top:1px solid var(--line);padding-top:10px;margin-top:6px}
+summary{cursor:pointer;color:var(--cyan);font-size:14px;font-weight:600}
+.fields{display:grid;gap:10px;margin-top:12px}
+.fields dt{font:500 11px "IBM Plex Mono",monospace;letter-spacing:.1em;text-transform:uppercase;color:var(--cyan)}
+.fields dd{margin:2px 0 0;color:var(--muted)}
+.cite{font-size:13px;color:var(--muted);background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-top:6px}
+.btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line2);background:transparent;color:var(--text);border-radius:10px;padding:7px 12px;font:500 13px "DM Sans",sans-serif;cursor:pointer}
+.btn:hover{border-color:var(--cyan)}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.empty{color:var(--muted);text-align:center;padding:60px 20px;border:1px dashed var(--line2);border-radius:var(--radius)}
+.review h2{font-size:clamp(24px,3.4vw,34px);margin-bottom:6px}
+.review .body h2{font-size:22px;margin:26px 0 10px}
+.review .body h3{font-size:18px;margin:20px 0 8px}
+.review .body p,.review .body li{color:var(--muted)}
+.review .body p{margin:0 0 12px}
+.review .body ul,.review .body ol{padding-left:22px;margin:0 0 14px}
+.review .body b{color:var(--text)}
+.archive{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+.archive .btn[aria-pressed=true]{border-color:var(--cyan);color:var(--cyan)}
+.note{font-size:12px;color:var(--muted);margin-top:30px;padding-bottom:40px}
+footer{border-top:1px solid var(--line);padding:24px 0;color:var(--muted);font-size:13px}
+@media (max-width:600px){.card{padding:16px}.hero{padding:40px 0 18px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="container nav">
+    <a class="logo" href="/" aria-label="DamarFlow home">
+      <svg viewBox="0 0 40 40" fill="none" aria-hidden="true">
+        <path d="M4 13c6-8 11 8 17 0s11 8 15 0" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        <path d="M4 20c6-8 11 8 17 0s11 8 15 0" stroke="var(--cyan)" stroke-width="1.6" stroke-linecap="round"/>
+        <path d="M4 27c6-8 11 8 17 0s11 8 15 0" stroke="var(--gold)" stroke-width="1.6" stroke-linecap="round"/>
+      </svg>
+      <span>Damar<b>Flow</b></span>
+    </a>
+    <div class="nav-actions">
+      <a class="back" href="/">← Home</a>
+      <button class="icon-btn" id="themeBtn" aria-label="Toggle appearance">◐</button>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+  <section class="hero">
+    <div class="kicker">Literature Watch</div>
+    <h1>New research, read and distilled.</h1>
+    <p>Papers on serpentinization, reactive transport and physics-informed machine learning, found daily across journals and preprint servers. Each one is summarized with its methods, results and limitations, and synthesized into a weekly literature review.</p>
+    <div class="stats" id="stats"></div>
+  </section>
+
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" id="tab-papers" aria-selected="true" aria-controls="panel-papers">Latest papers</button>
+    <button class="tab" role="tab" id="tab-reviews" aria-selected="false" aria-controls="panel-reviews">Weekly reviews</button>
+  </div>
+
+  <section class="panel" id="panel-papers" role="tabpanel" aria-labelledby="tab-papers">
+    <div class="toolbar">
+      <input id="q" type="search" placeholder="Search titles, authors, methods, keywords…" aria-label="Search papers">
+      <select id="topic" aria-label="Filter by topic"><option value="">All topics</option></select>
+      <select id="sort" aria-label="Sort papers">
+        <option value="date">Newest first</option>
+        <option value="rel">Most relevant</option>
+      </select>
+    </div>
+    <div class="list" id="papers"><div class="empty">Loading papers…</div></div>
+  </section>
+
+  <section class="panel" id="panel-reviews" role="tabpanel" aria-labelledby="tab-reviews" hidden>
+    <div class="archive" id="archive"></div>
+    <article class="card review" id="review"><div class="empty">Loading reviews…</div></article>
+    <p class="note">Summaries and reviews are generated by an AI research assistant from paper abstracts and may contain errors. Always consult the original paper before citing.</p>
+  </section>
+</main>
+
+<footer><div class="container">© DamarFlow · Literature data from OpenAlex · Updated automatically</div></footer>
+
+<script>
+(function(){
+  var body=document.body, themeBtn=document.getElementById('themeBtn');
+  try{ if(localStorage.getItem('df-theme')==='light'){body.classList.add('light');themeBtn.textContent='☼';} }catch(e){}
+  themeBtn.addEventListener('click',function(){
+    body.classList.toggle('light');
+    var light=body.classList.contains('light');
+    themeBtn.textContent=light?'☼':'◐';
+    try{localStorage.setItem('df-theme',light?'light':'dark');}catch(e){}
+  });
+
+  var tabs=[['tab-papers','panel-papers'],['tab-reviews','panel-reviews']];
+  function show(id){
+    tabs.forEach(function(t){
+      var on=t[0]===id;
+      document.getElementById(t[0]).setAttribute('aria-selected',on);
+      document.getElementById(t[1]).hidden=!on;
+    });
+    history.replaceState(null,'',id==='tab-reviews'?'#reviews':'#papers');
+  }
+  tabs.forEach(function(t){document.getElementById(t[0]).addEventListener('click',function(){show(t[0]);});});
+  if(location.hash==='#reviews') show('tab-reviews');
+
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+  function fmtDate(d){ if(!d) return ''; var x=new Date(d); return isNaN(x)?d:x.toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'}); }
+  function bust(u){ return u+'?v='+Date.now(); }
+
+  var PAPERS=[];
+  fetch(bust('/research/data/papers.json')).then(function(r){return r.json();}).then(function(d){
+    PAPERS=(d&&d.papers)||[];
+    var topics={};
+    PAPERS.forEach(function(p){ if(p.topic) topics[p.topic]=1; });
+    var sel=document.getElementById('topic');
+    Object.keys(topics).sort().forEach(function(t){var o=document.createElement('option');o.value=t;o.textContent=t;sel.appendChild(o);});
+    document.getElementById('stats').innerHTML=
+      '<span class="stat"><b>'+PAPERS.length+'</b> papers</span>'+
+      '<span class="stat"><b>'+Object.keys(topics).length+'</b> topics</span>'+
+      (d.updated?'<span class="stat">updated <b>'+esc(fmtDate(d.updated))+'</b></span>':'');
+    renderPapers();
+  }).catch(function(){ document.getElementById('papers').innerHTML='<div class="empty">No papers published yet.</div>'; });
+
+  function renderPapers(){
+    var q=document.getElementById('q').value.trim().toLowerCase();
+    var topic=document.getElementById('topic').value;
+    var sort=document.getElementById('sort').value;
+    var list=PAPERS.filter(function(p){
+      if(topic && p.topic!==topic) return false;
+      if(!q) return true;
+      return [p.title,p.authors,p.venue,p.summary,p.methods,p.keywords].join(' ').toLowerCase().indexOf(q)>-1;
+    });
+    list.sort(function(a,b){
+      if(sort==='rel') return (b.relevance_score||0)-(a.relevance_score||0);
+      return String(b.pub_date||'').localeCompare(String(a.pub_date||''));
+    });
+    var el=document.getElementById('papers');
+    if(!list.length){ el.innerHTML='<div class="empty">'+(PAPERS.length?'No papers match your search.':'No papers published yet — the first daily run will fill this page.')+'</div>'; return; }
+    el.innerHTML=list.map(function(p,i){
+      var r=Number(p.relevance_score)||0, cls=r>=7?'':(r>=4?' mid':' low');
+      var kw=String(p.keywords||'').split(/;[ ]*/).filter(Boolean).slice(0,5);
+      return '<article class="card">'+
+        '<h3><a href="'+esc(p.url)+'" target="_blank" rel="noopener">'+esc(p.title)+'</a></h3>'+
+        '<div class="meta">'+esc(p.authors)+(p.venue?' · <i>'+esc(p.venue)+'</i>':'')+' · '+esc(fmtDate(p.pub_date))+'</div>'+
+        '<div class="chips"><span class="chip rel'+cls+'">relevance '+r+'/10</span>'+(p.topic?'<span class="chip">'+esc(p.topic)+'</span>':'')+kw.map(function(k){return '<span class="chip">'+esc(k)+'</span>';}).join('')+'</div>'+
+        '<p class="summary">'+esc(p.summary)+'</p>'+
+        '<details><summary>Methods, results & limitations</summary><dl class="fields">'+
+          '<div><dt>Methods</dt><dd>'+esc(p.methods)+'</dd></div>'+
+          '<div><dt>Results</dt><dd>'+esc(p.results)+'</dd></div>'+
+          '<div><dt>Limitations</dt><dd>'+esc(p.limitations)+'</dd></div>'+
+          '<div><dt>Cite</dt><dd class="cite">'+esc(p.citation_apa)+'</dd></div>'+
+        '</dl><div class="row"><button class="btn" data-copy="apa" data-i="'+PAPERS.indexOf(p)+'">Copy APA</button><button class="btn" data-copy="bib" data-i="'+PAPERS.indexOf(p)+'">Copy BibTeX</button></div></details>'+
+      '</article>';
+    }).join('');
+  }
+  ['q','topic','sort'].forEach(function(id){document.getElementById(id).addEventListener('input',renderPapers);});
+  document.getElementById('papers').addEventListener('click',function(e){
+    var b=e.target.closest('[data-copy]'); if(!b) return;
+    var p=PAPERS[Number(b.getAttribute('data-i'))]; if(!p) return;
+    var txt=b.getAttribute('data-copy')==='bib'?p.bibtex:p.citation_apa;
+    var label=b.textContent;
+    (navigator.clipboard?navigator.clipboard.writeText(txt):Promise.reject()).then(function(){b.textContent='Copied ✓';},function(){b.textContent='Copy failed';}).then(function(){setTimeout(function(){b.textContent=label;},1500);});
+  });
+
+  var REVIEWS=[];
+  function showReview(i){
+    var r=REVIEWS[i]; if(!r) return;
+    var clean=window.DOMPurify?DOMPurify.sanitize(r.html,{ALLOWED_TAGS:['h2','h3','h4','p','ul','ol','li','b','strong','i','em','a','br'],ALLOWED_ATTR:['href']}):esc(r.html);
+    document.getElementById('review').innerHTML=
+      '<div class="kicker">Week of '+esc(fmtDate(r.date))+'</div>'+
+      '<h2>'+esc(r.title||'Weekly literature review')+'</h2>'+
+      '<div class="meta">'+(r.paper_count||0)+' papers reviewed</div>'+
+      '<div class="body">'+clean+'</div>';
+    Array.prototype.forEach.call(document.querySelectorAll('#archive .btn'),function(b,j){b.setAttribute('aria-pressed',j===i);});
+  }
+  fetch(bust('/research/data/reviews.json')).then(function(r){return r.json();}).then(function(d){
+    REVIEWS=((d&&d.reviews)||[]).sort(function(a,b){return String(b.date).localeCompare(String(a.date));});
+    if(!REVIEWS.length){ document.getElementById('review').innerHTML='<div class="empty">The first weekly review will appear here on Monday.</div>'; return; }
+    var arc=document.getElementById('archive');
+    arc.innerHTML=REVIEWS.slice(0,26).map(function(r,i){return '<button class="btn" data-r="'+i+'">'+esc(fmtDate(r.date))+'</button>';}).join('');
+    arc.addEventListener('click',function(e){var b=e.target.closest('[data-r]'); if(b) showReview(Number(b.getAttribute('data-r')));});
+    showReview(0);
+  }).catch(function(){ document.getElementById('review').innerHTML='<div class="empty">No reviews published yet.</div>'; });
+})();
+</script>
+</body>
+</html>
