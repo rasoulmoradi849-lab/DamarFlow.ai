@@ -1,7 +1,26 @@
 {
- "updated": "2026-11-07T14:08:45.575Z",
- "count": 84,
+ "updated": "2026-11-08T14:00:35.667Z",
+ "count": 85,
  "papers": [
+  {
+   "paper_id": "W7225380146",
+   "doi": "10.1002/adma.75657",
+   "title": "Engineering High‐Performance Flexible Electronics Through Scalable Manufacturing: Interplay of Materials, Processing, and Morphology",
+   "authors": "Boyue Gao, Yuzhu Li, Yue Wang, Zhitao Zhang",
+   "venue": "Advanced Materials",
+   "pub_date": "2026-11-06",
+   "url": "https://doi.org/10.1002/adma.75657",
+   "topic": "serpentinization reactive transport",
+   "summary": "This review summarizes scalable manufacturing strategies for flexible electronics, focusing on the interplay between material design, scalable processing, morphology evolution, and device integration for planar-type and fiber-type devices.",
+   "methods": "Not stated in abstract",
+   "results": "Not stated in abstract",
+   "limitations": "Not stated in abstract",
+   "keywords": "flexible electronics, scalable manufacturing, planar-type devices, fiber-type devices, morphology evolution",
+   "relevance_score": 0,
+   "citation_apa": "Gao, B., Li, Y., Wang, Y., & Zhang, Z. (2026). Engineering High‐Performance Flexible Electronics Through Scalable Manufacturing: Interplay of Materials, Processing, and Morphology. Advanced Materials. https://doi.org/10.1002/adma.75657",
+   "bibtex": "@article{Gao2026Engineering,\n  title = {Engineering High‐Performance Flexible Electronics Through Scalable Manufacturing: Interplay of Materials, Processing, and Morphology},\n  author = {Boyue Gao and Yuzhu Li and Yue Wang and Zhitao Zhang},\n  journal = {Advanced Materials},\n  year = {2026},\n  doi = {10.1002/adma.75657},\n  url = {https://doi.org/10.1002/adma.75657}\n}",
+   "added_at": "2026-11-08T14:00:35.549Z"
+  },
   {
    "paper_id": "W7225408085",
    "doi": "10.6084/m9.figshare.34941835",
