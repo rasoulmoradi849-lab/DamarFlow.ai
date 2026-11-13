@@ -1,7 +1,26 @@
 {
- "updated": "2026-11-12T14:06:39.538Z",
- "count": 116,
+ "updated": "2026-11-13T14:00:36.594Z",
+ "count": 117,
  "papers": [
+  {
+   "paper_id": "W7225727336",
+   "doi": "10.37352/2026495.2",
+   "title": "Herpetic esophagitis in a young immunocompetent patient: an unusual cause of severe odynophagia. A case report.",
+   "authors": "MÁ Martín Navas, MÁ Lorente Martínez, Celia Gutiérrez Holanda, Fernando Berdugo Hurtado",
+   "venue": "Revista Andaluza de Patología Digestiva",
+   "pub_date": "2026-11-10",
+   "url": "https://doi.org/10.37352/2026495.2",
+   "topic": "natural hydrogen serpentinization",
+   "summary": "A case report describing herpetic esophagitis in a 19-year-old immunocompetent woman presenting with severe odynophagia, diagnosed via endoscopy and biopsy for HSV-1, and successfully treated with acyclovir.",
+   "methods": "Case report of a single patient, including clinical examination, laboratory tests, upper gastrointestinal endoscopy, biopsies, histological examination, and viral detection techniques.",
+   "results": "The patient was diagnosed with herpetic esophagitis caused by HSV-1 and achieved complete clinical resolution after seven days of empirical treatment with oral acyclovir.",
+   "limitations": "Not stated in abstract",
+   "keywords": "Herpetic esophagitis, odynophagia, immunocompetent, HSV-1, case report",
+   "relevance_score": 0,
+   "citation_apa": "Navas, M. M., Martínez, M. L., Holanda, C. G., & Hurtado, F. B. (2026). Herpetic esophagitis in a young immunocompetent patient: an unusual cause of severe odynophagia. A case report.. Revista Andaluza de Patología Digestiva. https://doi.org/10.37352/2026495.2",
+   "bibtex": "@article{Navas2026Herpetic,\n  title = {Herpetic esophagitis in a young immunocompetent patient: an unusual cause of severe odynophagia. A case report.},\n  author = {MÁ Martín Navas and MÁ Lorente Martínez and Celia Gutiérrez Holanda and Fernando Berdugo Hurtado},\n  journal = {Revista Andaluza de Patología Digestiva},\n  year = {2026},\n  doi = {10.37352/2026495.2},\n  url = {https://doi.org/10.37352/2026495.2}\n}",
+   "added_at": "2026-11-13T14:00:36.406Z"
+  },
   {
    "paper_id": "W7225759966",
    "doi": "10.21203/rs.3.rs-11484464/v1",
